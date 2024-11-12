@@ -1,0 +1,25 @@
+services:
+  mysqlsrv:
+    image: mysql:5.7
+    environment: ### Variaveis estão declaradas dentro do arquivo .env que foi adicionado no .gitignore VARIAVEL=VALOR
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - /data/mysql-compose:/var/lib/mysql # Deve existir o /data/mysql-compose no host que estará executando o container
+    networks:
+      - minha-rede
+
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqlsrv
+    networks:
+      - minha-rede
+
+networks: 
+  minha-rede:
+    driver: bridge
