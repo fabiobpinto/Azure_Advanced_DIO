@@ -1,0 +1,44 @@
+services:
+  webserver:
+    image: webdevops/php-apache:alpine-php7
+    ports:
+      - "4500:80"
+    volumes:
+      - /data/lamp-compose/php:/app
+    networks:
+      - minha-rede
+    environment:
+      DB_SERVER: ${DB_SERVER}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_DATABASE: ${MYSQL_DATABASE}
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - /data/lamp-compose/mysql:/var/lib/mysql
+    networks:
+      - minha-rede
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:80"
+    volumes:
+      - /data/lamp-compose/phpmyadmin/uploads.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      - minha-rede
+
+networks:
+   minha-rede:
+     driver: bridge
